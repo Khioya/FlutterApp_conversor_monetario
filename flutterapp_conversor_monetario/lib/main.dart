@@ -1,125 +1,126 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  // ignore: prefer_const_constructors_in_immutables
+  MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Currency Converter',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: CurrencyConverter(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class CurrencyConverter extends StatefulWidget {
+  // ignore: prefer_const_constructors_in_immutables
+  CurrencyConverter({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  // ignore: library_private_types_in_public_api
+  _CurrencyConverterState createState() => _CurrencyConverterState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _CurrencyConverterState extends State<CurrencyConverter> {
+  double amount = 1.0;
+  String fromCurrency = 'USD';
+  String toCurrency = 'EUR';
+  double convertedAmount = 0.0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  Future<void> convertCurrency() async {
+    // const apiKey = 'b6a1a78d7ff966f8c9923532'; // Reemplaza con tu clave de API
+    final url =
+        'https://v6.exchangerate-api.com/v6/b6a1a78d7ff966f8c9923532/latest/$fromCurrency';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final rate = data['conversion_rates'][toCurrency];
+      setState(() {
+        convertedAmount = amount * rate;
+      });
+    } else {
+      // ignore: avoid_print
+      print('Error en la solicitud HTTP: ${response.statusCode}');
+    }
   }
+  
+  DropdownButton<String> buildCurrencyDropdown(String value, void Function(String?) onChanged) {
+  
+  final flagEmojis = ['🇦🇪', '🇦🇫', '🇦🇱', '🇦🇲', '🇦🇳', '🇦🇴', '🇦🇷', '🇦🇺', '🇦🇼', '🇦🇿', '🇧🇦', '🇧🇧', '🇧🇩', '🇧🇬', '🇧🇭', '🇧🇮', '🇧🇲', '🇧🇳', '🇧🇴', '🇧🇷', '🇧🇸', '🇧🇹', '🇧🇼', '🇧🇾', '🇧🇿', '🇨🇦', '🇨🇩', '🇨🇭', '🇨🇱', '🇨🇳', '🇨🇴', '🇨🇷', '🇨🇺', '🇨🇻', '🇨🇿', '🇩🇯', '🇩🇰', '🇩🇴', '🇩🇿', '🇪🇬', '🇪🇷', '🇪🇹', '🇪🇺', '🇫🇯', '🇫🇰', '🇫🇴', '🇬🇧', '🇬🇪', '🇬🇬', '🇬🇭', '🇬🇮', '🇬🇲', '🇬🇳', '🇬🇹', '🇬🇾', '🇭🇰', '🇭🇳', '🇭🇷', '🇭🇹', '🇭🇺', '🇮🇩', '🇮🇱', '🇮🇲', '🇮🇳', '🇮🇶', '🇮🇷', '🇮🇸', '🇯🇪', '🇯🇲', '🇯🇴', '🇯🇵', '🇰🇪', '🇰🇬', '🇰🇭', '🇰🇮', '🇰🇲', '🇰🇷', '🇰🇼', '🇰🇾', '🇰🇿', '🇱🇦', '🇱🇧', '🇱🇰', '🇱🇷', '🇱🇸', '🇱🇾', '🇲🇦', '🇲🇩', '🇲🇬', '🇲🇰', '🇲🇲', '🇲🇳', '🇲🇴', '🇲🇷', '🇲🇺', '🇲🇻', '🇲🇼', '🇲🇽', '🇲🇾', '🇲🇿', '🇳🇦', '🇳🇬', '🇳🇮', '🇳🇴', '🇳🇵', '🇳🇿', '🇴🇲', '🇵🇦', '🇵🇪', '🇵🇬', '🇵🇭', '🇵🇰', '🇵🇱', '🇵🇾', '🇶🇦', '🇷🇴', '🇷🇸', '🇷🇺', '🇷🇼', '🇸🇦', '🇸🇧', '🇸🇨', '🇸🇩', '🇸🇪', '🇸🇬', '🇸🇭', '🇸🇱', '🇸🇴', '🇸🇷', '🇸🇸', '🇸🇹', '🇸🇾', '🇸🇿', '🇹🇭', '🇹🇯', '🇹🇲', '🇹🇳', '🇹🇴', '🇹🇷', '🇹🇹', '🇹🇻', '🇹🇼', '🇹🇿', '🇺🇦', '🇺🇬', '🇺🇸', '🇺🇾', '🇺🇿', '🇻🇪', '🇻🇳', '🇻🇺', '🇼🇸', '🇨🇫', '🇿🇦']; 
+  final currencies = ['AED', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG', 'AZN', 'BAM', 'BBD', 'BDT', 'BGN', 'BHD', 'BIF', 'BMD', 'BND', 'BOB', 'BRL', 'BSD', 'BTN', 'BWP', 'BYN', 'BZD', 'CAD', 'CDF', 'CHF', 'CLP', 'CNY', 'COP', 'CRC', 'CUP', 'CVE', 'CZK', 'DJF', 'DKK', 'DOP', 'DZD', 'EGP', 'ERN', 'ETB', 'EUR', 'FJD', 'FKP', 'FOK', 'GBP', 'GEL', 'GGP', 'GHS', 'GIP', 'GMD', 'GNF', 'GTQ', 'GYD', 'HKD', 'HNL', 'HRK', 'HTG', 'HUF', 'IDR', 'ILS', 'IMP', 'INR', 'IQD', 'IRR', 'ISK', 'JEP', 'JMD', 'JOD', 'JPY', 'KES', 'KGS', 'KHR', 'KID', 'KMF', 'KRW', 'KWD', 'KYD', 'KZT', 'LAK', 'LBP', 'LKR', 'LRD', 'LSL', 'LYD', 'MAD', 'MDL', 'MGA', 'MKD', 'MMK', 'MNT', 'MOP', 'MRU', 'MUR', 'MVR', 'MWK', 'MXN', 'MYR', 'MZN', 'NAD', 'NGN', 'NIO', 'NOK', 'NPR', 'NZD', 'OMR', 'PAB', 'PEN', 'PGK', 'PHP', 'PKR', 'PLN', 'PYG', 'QAR', 'RON', 'RSD', 'RUB', 'RWF', 'SAR', 'SBD', 'SCR', 'SDG', 'SEK', 'SGD', 'SHP', 'SLE', 'SOS', 'SRD', 'SSP', 'STN', 'SYP', 'SZL', 'THB', 'TJS', 'TMT', 'TND', 'TOP', 'TRY', 'TTD', 'TVD', 'TWD', 'TZS', 'UAH', 'UGX', 'USD', 'UYU', 'UZS', 'VES', 'VND', 'VUV', 'WST', 'XAF', 'ZAR'];
+  final countries = ['Dirham de los Emiratos Árabes Unidos', 'Afgani afgano', 'Lek albanés', 'Dram armenio', 'Florín antillano neerlandés', 'Kwanza angoleño', 'Peso argentino', 'Dólar australiano', 'Florín arubeño', 'Manat azerbaiyano', 'Marco de Bosnia y Herzegovina', 'Dólar de Barbados', 'Taka bangladesí', 'Lev búlgaro', 'Dinar bahreiní', 'Franco burundés', 'Dólar bermudeño', 'Dólar de Brunéi', 'Boliviano boliviano', 'Real brasileño', 'Dólar bahameño', 'Ngultrum butanés', 'Pula de Botsuana', 'Rublo bielorruso', 'Dólar de Belice', 'Dólar canadiense', 'Franco congoleño', 'Franco suizo', 'Peso chileno', 'Renminbi chino', 'Peso colombiano', 'Colón costarricense', 'Peso cubano', 'Escudo caboverdiano', 'Corona checa', 'Franco yibutiano', 'Corona danesa', 'Peso dominicano', 'Dinar argelino', 'Libra egipcia', 'Nakfa eritreo', 'Birr etíope', 'Euro (Unión Europea)', 'Dólar fiyiano', 'Libra de las Islas Malvinas', 'Króna de las Islas Feroe', 'Libra esterlina (Reino Unido)', 'Lari georgiano', 'Libra de Guernsey', 'Cedi ghanés', 'Libra de Gibraltar', 'Dalasi gambiano', 'Franco guineano', 'Quetzal guatemalteco', 'Dólar guyanés', 'Dólar de Hong Kong', 'Lempira hondureño', 'Kuna croata', 'Gourde haitiano', 'Forint húngaro', 'Rupia indonesia', 'Nuevo shéquel israelí', 'Libra de la Isla de Man', 'Rupia india', 'Dinar iraquí', 'Rial iraní', 'Króna islandesa', 'Libra de Jersey', 'Dólar jamaicano', 'Dinar jordano', 'Yen japonés', 'Chelín keniano', 'Som kirguís', 'Riel camboyano', 'Dólar de Kiribati', 'Franco comorense', 'Won surcoreano', 'Dinar kuwaití', 'Dólar de las Islas Caimán', 'Tenge kazajo', 'Kip laosiano', 'Libra libanesa', 'Rupia de Sri Lanka', 'Dólar liberiano', 'Loti de Lesoto', 'Dinar libio', 'Dirham marroquí', 'Leu moldavo', 'Ariary malgache', 'Denar macedonio', 'Kyat birmano', 'Tögrög mongol', 'Pataca de Macao', 'Ouguiya mauritana', 'Rupia mauriciana', 'Rufiyaa de Maldivas', 'Kwacha de Malaui', 'Peso mexicano', 'Ringgit malasio', 'Metical mozambiqueño', 'Dólar namibio', 'Naira nigeriana', 'Córdoba nicaragüense', 'Corona noruega', 'Rupia nepalesa', 'Dólar neozelandés', 'Rial omaní', 'Balboa panameño', 'Sol peruano', 'Kina de Papúa Nueva Guinea', 'Peso filipino', 'Rupia paquistaní', 'Złoty polaco', 'Guaraní paraguayo', 'Riyal qatarí', 'Leu rumano', 'Dinar serbio', 'Rublo ruso', 'Franco ruandés', 'Riyal saudí', 'Dólar de las Islas Salomón', 'Rupia de Seychelles', 'Libra sudanesa', 'Corona sueca', 'Dólar de Singapur', 'Libra de Santa Helena', 'Leona de Sierra Leona', 'Chelín somalí', 'Dólar surinamés', 'Libra sursudanesa', 'Dobra de Santo Tomé y Príncipe', 'Libra siria', 'Lilangeni de Suazilandia', 'Baht tailandés', 'Somoni tayiko', 'Manat turcomano', 'Dinar tunecino', 'Paʻanga tongano', 'Lira turca', 'Dólar de Trinidad y Tobago', 'Dólar de Tuvalu', 'Nuevo dólar taiwanés', 'Chelín tanzano', 'Grivna ucraniana', 'Chelín ugandés', 'Dólar estadounidense', 'Peso uruguayo', 'Soʻm uzbeko', 'Bolívar soberano venezolano', 'Đồng vietnamita', 'Vatu vanuatuense', 'Tālā samoano', 'Franco CFA de África Central', 'Franco CFA de África Occidental','Rand sudafricano'];
+
+  List<String> combinedCurrencies = List.generate(currencies.length, (index) => '${flagEmojis[index]} ${currencies[index]} / ${countries[index]}');
+  
+  return DropdownButton<String>(
+    value: value,
+    onChanged: onChanged,
+    items: combinedCurrencies
+        .map<DropdownMenuItem<String>>((String currency) {
+      final parts = currency.split(' / ');
+      final currencyCode = parts[0].split(' ')[1]; // Obtén la abreviatura de la moneda
+      return DropdownMenuItem<String>(
+        value: currencyCode,
+        child: Text(currency),
+      );
+    }).toList(),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('Currency Converter'),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+            TextField(
+              decoration: const InputDecoration(labelText: 'Cantidad a convertir'),
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {
+                  amount = double.parse(value);
+                });
+              },
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            buildCurrencyDropdown(fromCurrency, (value) {
+              setState(() {
+                fromCurrency = value!;
+              });
+            }),
+            // ignore: prefer_const_constructors
+            Text('a'),
+            buildCurrencyDropdown(toCurrency, (value) {
+              setState(() {
+                toCurrency = value!;
+              });
+            }),
+            ElevatedButton(
+              onPressed: convertCurrency,
+              child: const Text('Convertir'),
             ),
+            Text('Resultado: $convertedAmount $toCurrency'),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+  
+
 }
