@@ -15,8 +15,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Currency Converter',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        fontFamily: 'Roboto',
+        primarySwatch: Colors.amber,
+        
       ),
       home: CurrencyConverter(),
     );
@@ -33,10 +36,30 @@ class CurrencyConverter extends StatefulWidget {
 }
 
 class _CurrencyConverterState extends State<CurrencyConverter> {
-  double amount = 1.0;
+  double amount = 0.0;
   String fromCurrency = 'USD';
   String toCurrency = 'EUR';
   double convertedAmount = 0.0;
+  late TextEditingController _controller;
+  
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: amount.toString());
+  }
+
+  void cambiarValorPrimerDropdown() {
+    setState(() {
+      String currencyTemp = fromCurrency;
+      fromCurrency = toCurrency;
+      toCurrency = currencyTemp;
+
+      double amountTemp = convertedAmount;
+      convertedAmount = amount;
+      amount = amountTemp;
+      _controller.text = amount.toString();
+    });
+  }
 
   Future<void> convertCurrency() async {
     // const apiKey = 'b6a1a78d7ff966f8c9923532'; // Reemplaza con tu clave de API
@@ -58,69 +81,216 @@ class _CurrencyConverterState extends State<CurrencyConverter> {
   }
   
   DropdownButton<String> buildCurrencyDropdown(String value, void Function(String?) onChanged) {
-  
-  final flagEmojis = ['🇦🇪', '🇦🇫', '🇦🇱', '🇦🇲', '🇦🇳', '🇦🇴', '🇦🇷', '🇦🇺', '🇦🇼', '🇦🇿', '🇧🇦', '🇧🇧', '🇧🇩', '🇧🇬', '🇧🇭', '🇧🇮', '🇧🇲', '🇧🇳', '🇧🇴', '🇧🇷', '🇧🇸', '🇧🇹', '🇧🇼', '🇧🇾', '🇧🇿', '🇨🇦', '🇨🇩', '🇨🇭', '🇨🇱', '🇨🇳', '🇨🇴', '🇨🇷', '🇨🇺', '🇨🇻', '🇨🇿', '🇩🇯', '🇩🇰', '🇩🇴', '🇩🇿', '🇪🇬', '🇪🇷', '🇪🇹', '🇪🇺', '🇫🇯', '🇫🇰', '🇫🇴', '🇬🇧', '🇬🇪', '🇬🇬', '🇬🇭', '🇬🇮', '🇬🇲', '🇬🇳', '🇬🇹', '🇬🇾', '🇭🇰', '🇭🇳', '🇭🇷', '🇭🇹', '🇭🇺', '🇮🇩', '🇮🇱', '🇮🇲', '🇮🇳', '🇮🇶', '🇮🇷', '🇮🇸', '🇯🇪', '🇯🇲', '🇯🇴', '🇯🇵', '🇰🇪', '🇰🇬', '🇰🇭', '🇰🇮', '🇰🇲', '🇰🇷', '🇰🇼', '🇰🇾', '🇰🇿', '🇱🇦', '🇱🇧', '🇱🇰', '🇱🇷', '🇱🇸', '🇱🇾', '🇲🇦', '🇲🇩', '🇲🇬', '🇲🇰', '🇲🇲', '🇲🇳', '🇲🇴', '🇲🇷', '🇲🇺', '🇲🇻', '🇲🇼', '🇲🇽', '🇲🇾', '🇲🇿', '🇳🇦', '🇳🇬', '🇳🇮', '🇳🇴', '🇳🇵', '🇳🇿', '🇴🇲', '🇵🇦', '🇵🇪', '🇵🇬', '🇵🇭', '🇵🇰', '🇵🇱', '🇵🇾', '🇶🇦', '🇷🇴', '🇷🇸', '🇷🇺', '🇷🇼', '🇸🇦', '🇸🇧', '🇸🇨', '🇸🇩', '🇸🇪', '🇸🇬', '🇸🇭', '🇸🇱', '🇸🇴', '🇸🇷', '🇸🇸', '🇸🇹', '🇸🇾', '🇸🇿', '🇹🇭', '🇹🇯', '🇹🇲', '🇹🇳', '🇹🇴', '🇹🇷', '🇹🇹', '🇹🇻', '🇹🇼', '🇹🇿', '🇺🇦', '🇺🇬', '🇺🇸', '🇺🇾', '🇺🇿', '🇻🇪', '🇻🇳', '🇻🇺', '🇼🇸', '🇨🇫', '🇿🇦']; 
-  final currencies = ['AED', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG', 'AZN', 'BAM', 'BBD', 'BDT', 'BGN', 'BHD', 'BIF', 'BMD', 'BND', 'BOB', 'BRL', 'BSD', 'BTN', 'BWP', 'BYN', 'BZD', 'CAD', 'CDF', 'CHF', 'CLP', 'CNY', 'COP', 'CRC', 'CUP', 'CVE', 'CZK', 'DJF', 'DKK', 'DOP', 'DZD', 'EGP', 'ERN', 'ETB', 'EUR', 'FJD', 'FKP', 'FOK', 'GBP', 'GEL', 'GGP', 'GHS', 'GIP', 'GMD', 'GNF', 'GTQ', 'GYD', 'HKD', 'HNL', 'HRK', 'HTG', 'HUF', 'IDR', 'ILS', 'IMP', 'INR', 'IQD', 'IRR', 'ISK', 'JEP', 'JMD', 'JOD', 'JPY', 'KES', 'KGS', 'KHR', 'KID', 'KMF', 'KRW', 'KWD', 'KYD', 'KZT', 'LAK', 'LBP', 'LKR', 'LRD', 'LSL', 'LYD', 'MAD', 'MDL', 'MGA', 'MKD', 'MMK', 'MNT', 'MOP', 'MRU', 'MUR', 'MVR', 'MWK', 'MXN', 'MYR', 'MZN', 'NAD', 'NGN', 'NIO', 'NOK', 'NPR', 'NZD', 'OMR', 'PAB', 'PEN', 'PGK', 'PHP', 'PKR', 'PLN', 'PYG', 'QAR', 'RON', 'RSD', 'RUB', 'RWF', 'SAR', 'SBD', 'SCR', 'SDG', 'SEK', 'SGD', 'SHP', 'SLE', 'SOS', 'SRD', 'SSP', 'STN', 'SYP', 'SZL', 'THB', 'TJS', 'TMT', 'TND', 'TOP', 'TRY', 'TTD', 'TVD', 'TWD', 'TZS', 'UAH', 'UGX', 'USD', 'UYU', 'UZS', 'VES', 'VND', 'VUV', 'WST', 'XAF', 'ZAR'];
-  final countries = ['Dirham de los Emiratos Árabes Unidos', 'Afgani afgano', 'Lek albanés', 'Dram armenio', 'Florín antillano neerlandés', 'Kwanza angoleño', 'Peso argentino', 'Dólar australiano', 'Florín arubeño', 'Manat azerbaiyano', 'Marco de Bosnia y Herzegovina', 'Dólar de Barbados', 'Taka bangladesí', 'Lev búlgaro', 'Dinar bahreiní', 'Franco burundés', 'Dólar bermudeño', 'Dólar de Brunéi', 'Boliviano boliviano', 'Real brasileño', 'Dólar bahameño', 'Ngultrum butanés', 'Pula de Botsuana', 'Rublo bielorruso', 'Dólar de Belice', 'Dólar canadiense', 'Franco congoleño', 'Franco suizo', 'Peso chileno', 'Renminbi chino', 'Peso colombiano', 'Colón costarricense', 'Peso cubano', 'Escudo caboverdiano', 'Corona checa', 'Franco yibutiano', 'Corona danesa', 'Peso dominicano', 'Dinar argelino', 'Libra egipcia', 'Nakfa eritreo', 'Birr etíope', 'Euro (Unión Europea)', 'Dólar fiyiano', 'Libra de las Islas Malvinas', 'Króna de las Islas Feroe', 'Libra esterlina (Reino Unido)', 'Lari georgiano', 'Libra de Guernsey', 'Cedi ghanés', 'Libra de Gibraltar', 'Dalasi gambiano', 'Franco guineano', 'Quetzal guatemalteco', 'Dólar guyanés', 'Dólar de Hong Kong', 'Lempira hondureño', 'Kuna croata', 'Gourde haitiano', 'Forint húngaro', 'Rupia indonesia', 'Nuevo shéquel israelí', 'Libra de la Isla de Man', 'Rupia india', 'Dinar iraquí', 'Rial iraní', 'Króna islandesa', 'Libra de Jersey', 'Dólar jamaicano', 'Dinar jordano', 'Yen japonés', 'Chelín keniano', 'Som kirguís', 'Riel camboyano', 'Dólar de Kiribati', 'Franco comorense', 'Won surcoreano', 'Dinar kuwaití', 'Dólar de las Islas Caimán', 'Tenge kazajo', 'Kip laosiano', 'Libra libanesa', 'Rupia de Sri Lanka', 'Dólar liberiano', 'Loti de Lesoto', 'Dinar libio', 'Dirham marroquí', 'Leu moldavo', 'Ariary malgache', 'Denar macedonio', 'Kyat birmano', 'Tögrög mongol', 'Pataca de Macao', 'Ouguiya mauritana', 'Rupia mauriciana', 'Rufiyaa de Maldivas', 'Kwacha de Malaui', 'Peso mexicano', 'Ringgit malasio', 'Metical mozambiqueño', 'Dólar namibio', 'Naira nigeriana', 'Córdoba nicaragüense', 'Corona noruega', 'Rupia nepalesa', 'Dólar neozelandés', 'Rial omaní', 'Balboa panameño', 'Sol peruano', 'Kina de Papúa Nueva Guinea', 'Peso filipino', 'Rupia paquistaní', 'Złoty polaco', 'Guaraní paraguayo', 'Riyal qatarí', 'Leu rumano', 'Dinar serbio', 'Rublo ruso', 'Franco ruandés', 'Riyal saudí', 'Dólar de las Islas Salomón', 'Rupia de Seychelles', 'Libra sudanesa', 'Corona sueca', 'Dólar de Singapur', 'Libra de Santa Helena', 'Leona de Sierra Leona', 'Chelín somalí', 'Dólar surinamés', 'Libra sursudanesa', 'Dobra de Santo Tomé y Príncipe', 'Libra siria', 'Lilangeni de Suazilandia', 'Baht tailandés', 'Somoni tayiko', 'Manat turcomano', 'Dinar tunecino', 'Paʻanga tongano', 'Lira turca', 'Dólar de Trinidad y Tobago', 'Dólar de Tuvalu', 'Nuevo dólar taiwanés', 'Chelín tanzano', 'Grivna ucraniana', 'Chelín ugandés', 'Dólar estadounidense', 'Peso uruguayo', 'Soʻm uzbeko', 'Bolívar soberano venezolano', 'Đồng vietnamita', 'Vatu vanuatuense', 'Tālā samoano', 'Franco CFA de África Central', 'Franco CFA de África Occidental','Rand sudafricano'];
+    final Map<String, dynamic> paises = {
+      'Estados Unidos': {
+        'emoji': '🇺🇸',
+        'codigoMoneda': 'USD',
+      },
 
-  List<String> combinedCurrencies = List.generate(currencies.length, (index) => '${flagEmojis[index]} ${currencies[index]} / ${countries[index]}');
+      'México': {
+        'emoji': '🇲🇽',
+        'codigoMoneda': 'MXN',
+      },
+      'Unión Europea': {
+        'emoji': '🇪🇺',
+        'codigoMoneda': 'EUR',
+      },
+      'Japón': {
+        'emoji': '🇯🇵',
+        'codigoMoneda': 'JPY',
+      },
+      'Corea': {
+        'emoji': '🇰🇷',
+        'codigoMoneda': 'KRW',
+      },
+      'Chile': {
+        'emoji': '🇨🇱',
+        'codigoMoneda': 'CLP',
+      },
+      'Emiratos Árabes Unidos': {
+        'emoji': '🇦🇪',
+        'codigoMoneda': 'AED',
+      },
+      'China': {
+        'emoji': '🇨🇳',
+        'codigoMoneda': 'CNY',
+      },
+      'Rusia': {
+        'emoji': '🇷🇺',
+        'codigoMoneda': 'RUB',
+      },
+    };
+
   
-  return DropdownButton<String>(
-    value: value,
-    onChanged: onChanged,
-    items: combinedCurrencies
-        .map<DropdownMenuItem<String>>((String currency) {
-      final parts = currency.split(' / ');
-      final currencyCode = parts[0].split(' ')[1]; // Obtén la abreviatura de la moneda
-      return DropdownMenuItem<String>(
-        value: currencyCode,
-        child: Text(currency),
-      );
-    }).toList(),
-  );
-}
+    List<String> listaPaises = paises.entries
+    .map((entry) => '${entry.value['emoji']} ${entry.value['codigoMoneda']}')
+    .toList();
+
+    return DropdownButton<String>(
+      key: UniqueKey(),
+      value: value,
+      onChanged: onChanged,
+      items: listaPaises
+          .map<DropdownMenuItem<String>>((String currency) {
+        final parts = currency.split(' ');
+        final currencyCode = parts[1];
+        return DropdownMenuItem<String>(
+          value: currencyCode,
+          child: Text(currency, style: const TextStyle(
+              fontSize: 24.0,
+            ),
+          ),
+        );
+      }).toList(),
+      underline: Container(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Currency Converter'),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: const Text('Conversor Monetario'),
       ),
-      body: Center(
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          color: Colors.white
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            TextField(
-              decoration: const InputDecoration(labelText: 'Cantidad a convertir'),
-              keyboardType: TextInputType.number,
-              onChanged: (value) {
-                setState(() {
-                  amount = double.parse(value);
-                });
-              },
+            SizedBox(height: MediaQuery.of(context).size.width * 0.3),
+            SizedBox(// Establecer el ancho al 60% de la pantalla
+              width: MediaQuery.of(context).size.width * 0.6,
+              child: Row(
+                children: [
+                  buildCurrencyDropdown(fromCurrency, (value) {
+                    setState(() {
+                      fromCurrency = value!;
+                      convertCurrency();
+                    });
+                  }),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 12.5, bottom: 12.5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                        color: Colors.white,
+                      ),
+                      child: TextField(
+                        controller: _controller,
+                        decoration: InputDecoration(
+                          labelText: 'Cantidad',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
+                          fillColor: Colors.white,
+                          filled: true,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20), 
+                          isDense: true, 
+                          hintStyle: const TextStyle(fontSize: 22), 
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: const BorderSide(color: Colors.white), 
+                          ),
+                        ),
+                        keyboardType: TextInputType.number,
+
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 22), 
+                        onSubmitted: (value) {
+                          setState(() {
+                            amount = double.parse(value);
+                          });
+                          convertCurrency();
+                        },
+                      ),
+                    )
+                  ),
+                  
+                ],
+              ),
             ),
-            buildCurrencyDropdown(fromCurrency, (value) {
-              setState(() {
-                fromCurrency = value!;
-              });
-            }),
-            // ignore: prefer_const_constructors
-            Text('a'),
-            buildCurrencyDropdown(toCurrency, (value) {
-              setState(() {
-                toCurrency = value!;
-              });
-            }),
+            
             ElevatedButton(
-              onPressed: convertCurrency,
-              child: const Text('Convertir'),
+              onPressed: cambiarValorPrimerDropdown,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 192, 236, 253), 
+              ),
+              child: const Icon(
+                Icons.sync,
+                color: Colors.black, 
+              ),
             ),
-            Text('Resultado: $convertedAmount $toCurrency'),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.6, 
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 12.5, bottom: 12.5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                        color: Colors.white,
+                      ),
+                      child: TextField(
+                        controller: TextEditingController(text: convertedAmount.toStringAsFixed(2)),
+                        readOnly: true, 
+                        decoration: InputDecoration(
+                          labelText: 'Resultado',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
+                          fillColor: Colors.white,
+                          filled: true,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20), 
+                          isDense: true, 
+                          hintStyle: const TextStyle(fontSize: 22), 
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: const BorderSide(color: Colors.white), 
+                          ),
+                        ),
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.center, 
+                        style: const TextStyle(fontSize: 22), 
+                      ),
+                    )
+                  ),
+                  const SizedBox(width: 14), 
+                  buildCurrencyDropdown(toCurrency, (value) {
+                    setState(() {
+                      toCurrency = value!;
+                      convertCurrency();
+                    });
+                  }),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-  
-
 }
